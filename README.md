@@ -493,3 +493,46 @@ LICENSE
 3af333035f9e104072ea1a0621fcfec0f3281ca441bb0ce877036c5ec900e1e3
 ```
 
+
+# Container restart policy 
+
+[docker docs] (https://docs.docker.com/config/containers/start-containers-automatically/)
+
+## restart policy during container cration 
+
+```
+ 256  docker run -itd --name ashuxc1 -p 1133:80  ashutoshh:htmlappv1  
+  257  docker  ps
+  258  docker  inspect  ashuxc1 
+  259  history 
+  260  docker run -itd --name ashuxc2 -p 1134:80 --restart always  ashutoshh:htmlappv1  
+  261  history 
+
+
+```
+
+## update restart policy 
+
+```
+[ec2-user@ip-172-31-75-167 ~]$ docker update  ashuxc1 --restart unless-stopped 
+ashuxc1
+
+```
+
+## Dockerfile with entrypoint parent process
+
+```
+[ec2-user@ip-172-31-75-167 htmlapp]$ cat ashutoshh.txt 
+FROM  oraclelinux:8
+MAINTAINER  ashutoshh@linux.com 
+RUN  yum install httpd -y
+WORKDIR  /var/www/html/
+COPY  myapp .
+EXPOSE 80
+ENTRYPOINT  /usr/sbin/httpd -DFOREGROUND
+# entrypoint based parent process can't be replaced as last container argument 
+#CMD /usr/sbin/httpd -DFOREGROUND
+# CMD is replacable 
+
+```
+
