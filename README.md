@@ -53,3 +53,34 @@ Resolving Dependencies
 Created symlink from /etc/systemd/system/multi-user.target.wants/docker.service to /usr/lib/systemd/system/docker.service.
 
 ```
+
+
+## DOcker client connection 
+
+<img src="dockerconn.png">
+
+## basic troubleshooting 
+
+```
+ec2-user@ip-172-31-75-167 ~]$ docker  version 
+Client:
+ Version:           19.03.13-ce
+ API version:       1.40
+ Go version:        go1.13.15
+ Git commit:        4484c46
+ Built:             Mon Oct 12 18:51:20 2020
+ OS/Arch:           linux/amd64
+ Experimental:      false
+Got permission denied while trying to connect to the Docker daemon socket at unix:///var/run/docker.sock: Get http://%2Fvar%2Frun%2Fdocker.sock/v1.40/version: dial unix /var/run/docker.sock: connect: permission denied
+
+```
+
+## adding non root users to docker group
+
+```
+[root@ip-172-31-75-167 ~]# usermod -a -G docker sandeep 
+[root@ip-172-31-75-167 ~]# 
+[root@ip-172-31-75-167 ~]# grep docker /etc/group
+docker:x:992:sandeep
+
+```
