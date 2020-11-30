@@ -302,3 +302,84 @@ c4297228345d        alpine              "ping fb.com"           3 minutes ago   
 a9c24d9995d0        alpine              "ping fb.com"           4 minutes ago        Up 4 minutes           
 
 ```
+
+
+## useful docker cli tricks
+
+```
+[ec2-user@ip-172-31-75-167 ~]$ docker  kill   $(docker ps   -q)
+635672efdc74
+32c1f41e2966
+[ec2-user@ip-172-31-75-167 ~]$ docker  ps 
+CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS              PORTS               NAMES
+[ec2-user@ip-172-31-75-167 ~]$ 
+
+
+```
+
+
+## removing all non running containers
+
+```
+[ec2-user@ip-172-31-75-167 ~]$ docker rm  $(docker  ps   -a -q)
+635672efdc74
+3d1d5a416592
+18cbd1d0e199
+32c1f41e2966
+
+```
+
+## getting a shell a parent process
+
+```
+[ec2-user@ip-172-31-75-167 ~]$ docker  run  --name  ashuc3 -it  oraclelinux:8  bash 
+[root@c862f55a5995 /]# uname 
+Linux
+[root@c862f55a5995 /]# uname  -r
+4.14.203-156.332.amzn2.x86_64
+[root@c862f55a5995 /]# cat  /etc/os-release 
+NAME="Oracle Linux Server"
+VERSION="8.3"
+ID="ol"
+ID_LIKE="fedora"
+VARIANT="Server"
+VARIANT_ID="server"
+VERSION_ID="8.3"
+PLATFORM_ID="platform:el8"
+PRETTY_NAME="Oracle Linux Server 8.3"
+ANSI_COLOR="0;31"
+CPE_NAME="cpe:/o:oracle:linux:8:3:server"
+HOME_URL="https://linux.oracle.com/"
+BUG_REPORT_URL="https://bugzilla.oracle.com/"
+
+ORACLE_BUGZILLA_PRODUCT="Oracle Linux 8"
+ORACLE_BUGZILLA_PRODUCT_VERSION=8.3
+ORACLE_SUPPORT_PRODUCT="Oracle Linux"
+ORACLE_SUPPORT_PRODUCT_VERSION=8.3
+[root@c862f55a5995 /]# exit
+exit
+[ec2-user@ip-172-31-75-167 ~]$ uname -r
+4.14.203-156.332.amzn2.x86_64
+[ec2-user@ip-172-31-75-167 ~]$ 
+
+```
+
+
+## shell as child process
+
+```
+[ec2-user@ip-172-31-75-167 ~]$ docker  run  --name  ashuc4 -d oraclelinux:8  ping fb.com  
+680d71803b7a1e5059a643d0ee9ff3871cadc912258125dced249d57a692a7ef
+[ec2-user@ip-172-31-75-167 ~]$ 
+[ec2-user@ip-172-31-75-167 ~]$ docker  ps
+CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS              PORTS               NAMES
+8c44378f8e50        oraclelinux:7.9     "bash"              2 seconds ago       Up 1 second                             thisisnotashuc3
+680d71803b7a        oraclelinux:8       "ping fb.com"       3 seconds ago       Up 3 seconds                            ashuc4
+[ec2-user@ip-172-31-75-167 ~]$ docker  exec  -it  ashuc4  bash 
+[root@680d71803b7a /]# 
+[root@680d71803b7a /]# 
+[root@680d71803b7a /]# exit
+exit
+
+```
+
