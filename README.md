@@ -383,3 +383,32 @@ exit
 
 ```
 
+# namespace and cgroups
+
+<img src="cg.png">
+
+## application deployment in container 
+
+<img src="appdep.png">
+
+### python based application 
+
+#### python code 
+
+```
+[ec2-user@ip-172-31-75-167 python_app]$ cat ashu.py 
+import subprocess
+import time
+
+while 3 > 2 :
+    print("Hello world")
+    time.sleep(2)
+    t=time.ctime()
+    print("____________")
+    print("current time is ",t)
+    print("_____________________")
+    time.sleep(1)
+    
+    ```
+    
+    
