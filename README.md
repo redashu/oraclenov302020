@@ -479,3 +479,17 @@ LICENSE
 
 ```
 
+## building Docker image
+
+```
+  docker  build  -t  ashutoshh:htmlappv1 -f ashutoshh.txt  . 
+  
+```
+
+## application lauch with web app
+
+```
+ htmlapp]$ docker run -itd  --name ashuweb1  -p  1122:80  ashutoshh:htmlappv1  
+3af333035f9e104072ea1a0621fcfec0f3281ca441bb0ce877036c5ec900e1e3
+```
+
