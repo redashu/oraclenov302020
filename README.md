@@ -411,4 +411,37 @@ while 3 > 2 :
     
     ```
     
+    ## image build process
     
+    ```
+    [ec2-user@ip-172-31-75-167 python_app]$ docker build  -t  ashutoshh:pythonapp1 .
+Sending build context to Docker daemon  3.072kB
+Step 1/7 : FROM  python
+ ---> a3fe352c5377
+Step 2/7 : MAINTAINER  ashutoshh@linux.com
+ ---> Running in d17c7c79aef0
+Removing intermediate container d17c7c79aef0
+ ---> f4068fe30d8c
+Step 3/7 : RUN  mkdir  /codes
+ ---> Running in e7f611060a01
+Removing intermediate container e7f611060a01
+ ---> a2a77cf9db1a
+Step 4/7 : COPY  ashu.py   /codes/ashu.py
+ ---> c417fb9db92c
+Step 5/7 : WORKDIR  /codes
+ ---> Running in 48be48b11e3f
+Removing intermediate container 48be48b11e3f
+ ---> 731aaafbaa1e
+Step 6/7 : RUN  chmod +x ashu.py
+ ---> Running in 59182a00ffb9
+Removing intermediate container 59182a00ffb9
+ ---> f8e61b471ad7
+Step 7/7 : CMD  ["python","ashu.py"]
+ ---> Running in 180fc73c5cb0
+Removing intermediate container 180fc73c5cb0
+ ---> 1c439cd85c88
+Successfully built 1c439cd85c88
+Successfully tagged ashutoshh:pythonapp1
+
+```
+
