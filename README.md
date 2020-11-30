@@ -445,3 +445,37 @@ Successfully tagged ashutoshh:pythonapp1
 
 ```
 
+## building container from above created 
+
+```
+docker run -itd --name ashuxc1  ashutoshh:pythonapp1 
+
+```
+
+## DOcker image building with html based app image
+
+```
+[ec2-user@ip-172-31-75-167 htmlapp]$ ls
+ashutoshh.txt  myapp
+[ec2-user@ip-172-31-75-167 htmlapp]$ ls  -a 
+.  ..  .dockerignore  ashutoshh.txt  myapp
+[ec2-user@ip-172-31-75-167 htmlapp]$ ls -a myapp/
+.  ..  .git  CODE_OF_CONDUCT.md  LICENSE  README.md  images  index.html  styles
+[ec2-user@ip-172-31-75-167 htmlapp]$ cat  ashutoshh.txt 
+FROM  oraclelinux:8
+MAINTAINER  ashutoshh@linux.com 
+RUN  yum install httpd -y
+WORKDIR  /var/www/html/
+COPY  myapp .
+EXPOSE 80
+CMD /usr/sbin/httpd -DFOREGROUND
+
+[ec2-user@ip-172-31-75-167 htmlapp]$ cat .dockerignore 
+.git
+ashutoshh.txt
+.dockerignore
+*.md
+LICENSE
+
+```
+
