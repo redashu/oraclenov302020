@@ -111,3 +111,13 @@ Server:
   Version:          1.4.1
 
 ```
+
+
+## Docker image concept
+
+<img src="di.png">
+
+## docker images places to search and download 
+
+<img src="reg.png">
+
