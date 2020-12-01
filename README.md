@@ -471,4 +471,143 @@ $env:DOCKER_HOST="tcp://100.26.75.67:2375"
 ```
 
 
+# Docker storage
 
+## partition creation 
+
+<img src="st.png">
+
+### configure docker engine storage
+
+```
+[root@ip-172-31-75-167 sysconfig]# cat  docker
+# The max number of open files for the daemon itself, and all
+# running containers.  The default value of 1048576 mirrors the value
+# used by the systemd service unit.
+DAEMON_MAXFILES=1048576
+
+# Additional startup options for the Docker daemon, for example:
+# OPTIONS="--ip-forward=true --iptables=true"
+# By default we limit the number of open files per container
+OPTIONS="--default-ulimit nofile=1024:4096  -H tcp://0.0.0.0:2375 -H unix:///var/run/docker.socket -g  /mnt/oracle/"
+
+# How many seconds the sysvinit script waits for the pidfile to appear
+# when starting the daemon.
+DAEMON_PIDFILE_TIMEOUT=10
+[root@ip-172-31-75-167 sysconfig]# systemctl daemon-reload 
+[root@ip-172-31-75-167 sysconfig]# systemctl restart docker
+[root@ip-172-31-75-167 sysconfig]# docker info  |  grep -i root 
+WARNING: API is accessible on http://0.0.0.0:2375 without encryption.
+         Access to the remote API is equivalent to root access on the host. Refer
+         to the 'Docker daemon attack surface' section in the documentation for
+         more information: https://docs.docker.com/engine/security/security/#docker-daemon-attack-surface
+ Docker Root Dir: /mnt/oracle
+
+```
+
+# Container storage options 
+
+<img src="cst.png">
+
+## docker volume for containers
+
+```
+[ec2-user@ip-172-31-75-167 ~]$ docker  volume  create  ashuvol1 
+ashuvol1
+[ec2-user@ip-172-31-75-167 ~]$ docker  volume  ls
+DRIVER              VOLUME NAME
+local               ashuvol1
+[ec2-user@ip-172-31-75-167 ~]$ docker  volume  ls
+DRIVER              VOLUME NAME
+local               ashuvol1
+[ec2-user@ip-172-31-75-167 ~]$ docker  volume  ls
+DRIVER              VOLUME NAME
+local               ashuvol1
+[ec2-user@ip-172-31-75-167 ~]$ docker  volume  ls
+DRIVER              VOLUME NAME
+local               ashuvol1
+local               rk
+local               sathishVOL
+[ec2-user@ip-172-31-75-167 ~]$ docker run -it --rm  -v ashuvol1:/mydata:rw  alpine  sh 
+/ # ls
+bin     etc     lib     mnt     opt     root    sbin    sys     usr
+dev     home    media   mydata  proc    run     srv     tmp     var
+/ # cd  mydata/
+/mydata # ls
+/mydata # mkdir d a c d dsf
+mkdir: can't create directory 'd': File exists
+/mydata # ls
+a    c    d    dsf
+/mydata # touch a.txt
+/mydata # ls
+a      a.txt  c      d      dsf
+/mydata # exit
+
+
+```
+
+## docker volume inspect 
+
+```
+[ec2-user@ip-172-31-75-167 ~]$ docker  volume  inspect  ashuvol1 
+[
+    {
+        "CreatedAt": "2020-12-01T09:50:08Z",
+        "Driver": "local",
+        "Labels": {},
+        "Mountpoint": "/mnt/oracle/volumes/ashuvol1/_data",
+        "Name": "ashuvol1",
+        "Options": {},
+        "Scope": "local"
+    }
+
+```
+
+### accessing volume data
+
+```
+[ec2-user@ip-172-31-75-167 ~]$ cd  /mnt/oracle/
+[ec2-user@ip-172-31-75-167 oracle]$ ls
+ls: cannot open directory .: Permission denied
+[ec2-user@ip-172-31-75-167 oracle]$ sudo -i
+[root@ip-172-31-75-167 ~]# cd  /mnt/oracle/
+[root@ip-172-31-75-167 oracle]# ls
+builder  buildkit  containers  image  network  overlay2  plugins  runtimes  swarm  tmp  trust  volumes
+[root@ip-172-31-75-167 oracle]# cd volumes/
+[root@ip-172-31-75-167 volumes]# ls
+ashuvol1  bprvnrj  metadata.db  narayanavol  narayanavol1  rk  rohitvol1  sathishVOL  spit  svvol1  thanos
+[root@ip-172-31-75-167 volumes]# cd  ashuvol1/
+[root@ip-172-31-75-167 ashuvol1]# ls
+_data
+[root@ip-172-31-75-167 ashuvol1]# cd _data/
+[root@ip-172-31-75-167 _data]# ls
+a  a.txt  c  d  dsf
+
+```
+
+## docker volume with readonly 
+
+```
+[ec2-user@ip-172-31-75-167 oracle]$ docker run -it --name ashuxc1  -v ashuvol1:/mydata:ro  centos  bash 
+Unable to find image 'centos:latest' locally
+latest: Pulling from library/centos
+3c72a8ed6814: Pull complete 
+Digest: sha256:76d24f3ba3317fa945743bb3746fbaf3a0b752f10b10376960de01da70685fbd
+Status: Downloaded newer image for centos:latest
+[root@08ba08c463c0 /]# 
+[root@08ba08c463c0 /]# 
+[root@08ba08c463c0 /]# ls  
+bin  dev  etc  home  lib  lib64  lost+found  media  mnt  mydata  opt  proc  root  run  sbin  srv  sys  tmp  usr  var
+[root@08ba08c463c0 /]# cd  mydata/
+[root@08ba08c463c0 mydata]# ls
+a  a.txt  c  d	dsf
+[root@08ba08c463c0 mydata]# mkdir  hekkk
+mkdir: cannot create directory 'hekkk': Read-only file system
+[root@08ba08c463c0 mydata]# ls
+a  a.txt  c  d	dsf
+[root@08ba08c463c0 mydata]# rmdir a
+rmdir: failed to remove 'a': Read-only file system
+[root@08ba08c463c0 mydata]# ls
+a  a.txt  c  d	dsf
+
+```
