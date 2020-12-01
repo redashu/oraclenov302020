@@ -611,3 +611,54 @@ rmdir: failed to remove 'a': Read-only file system
 a  a.txt  c  d	dsf
 
 ```
+
+
+## folder as docker volume 
+
+```
+525  git clone https://github.com/mdn/beginner-html-site-styled
+  526  ls
+  527  mv  beginner-html-site-styled/  app1
+  528  s
+  529  ls
+  530  docker run -d --name xx1  -p 1122:80 -v `pwd`/app1:/usr/share/nginx/html:ro nginx 
+
+```
+
+### a file as docker volume 
+
+```
+ec2-user@ip-172-31-75-167 ~]$ docker run -it --rm   -v  /etc/group:/tmp/a.txt  alpine sh 
+/ # 
+/ # cat /tmp/a.txt 
+root:x:0:
+bin:x:1:
+daemon:x:2:
+sys:x:3:
+adm:x:4:ec2-user
+tty:x:5:
+
+```
+
+# Docker engine with web UI management 
+
+## portainer ==>>. https://www.portainer.io/
+
+## https://rancher.com/ --
+
+## launching portainer 
+
+```
+[ec2-user@ip-172-31-75-167 ~]$ docker run  -d --name webui --restart always -p 1199:9000 -v  /var/run/docker.sock:/var/run/docker.sock  portainer/portainer
+25ec7fa09a1499762fd35d9a235eaac82637c269f8b832f1929fb9df572ed6d7
+[ec2-user@ip-172-31-75-167 ~]$ 
+[ec2-user@ip-172-31-75-167 ~]$ docker logs -f webui 
+2020/12/01 10:21:44 Warning: the --template-file flag is deprecated and will likely be removed in a future version of Portainer.
+2020/12/01 10:21:44 server: Reverse tunnelling enabled
+2020/12/01 10:21:44 server: Fingerprint 50:6c:b6:2c:d9:73:f3:52:61:4b:40:06:6f:1f:04:96
+2020/12/01 10:21:44 server: Listening on 0.0.0.0:8000...
+2020/12/01 10:21:44 Starting Portainer 1.24.1 on :9000
+2020/12/01 10:21:44 [DEBUG] [chisel, monitoring] [check_interval_seconds: 10.000000] [message: starting tunnel management process]
+^C
+
+```
