@@ -162,3 +162,201 @@ f3be340a54b9: Mounted from library/python
 v001: digest: sha256:fe9cfc32434a54a213f3d35852b2a4c7b3bb6a47befe6e18fc756266d7368885 size: 2843
 
 ```
+
+## Pushing image on azure container registry (ACR)
+
+```
+ 300  docker login  ashutoshh.azurecr.io 
+  301  docker  tag  alpine:lastest   ashutoshh.azurecr.io/alpine:v1 
+  302  docker  tag  alpine:latest   ashutoshh.azurecr.io/alpine:v1 
+  303  docker  push   ashutoshh.azurecr.io/alpine:v1 
+  304  history 
+  305  docker  rmi ashutoshh.azurecr.io/alpine:v1
+  306  docker  pull ashutoshh.azurecr.io/alpine:v1
+  307  docker logout  ashutoshh.azurecr.io
+  308  docker  rmi ashutoshh.azurecr.io/alpine:v1
+  309  docker  pull ashutoshh.azurecr.io/alpine:v1
+  310  docker login  ashutoshh.azurecr.io 
+  311  docker  pull ashutoshh.azurecr.io/alpine:v1
+  
+  ```
+  
+  # Docker network overview 
+  
+  <img src="dnet.png">
+  
+  ## docker0 bridge
+  
+  ```
+  
+  [ec2-user@ip-172-31-75-167 ~]$ ifconfig 
+docker0: flags=4099<UP,BROADCAST,MULTICAST>  mtu 1500
+        inet 172.17.0.1  netmask 255.255.0.0  broadcast 172.17.255.255
+        inet6 fe80::42:78ff:fe68:64a8  prefixlen 64  scopeid 0x20<link>
+        ether 02:42:78:68:64:a8  txqueuelen 0  (Ethernet)
+        RX packets 2674  bytes 1141780 (1.0 MiB)
+        RX errors 0  dropped 0  overruns 0  frame 0
+        TX packets 3111  bytes 24058914 (22.9 MiB)
+        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+
+eth0: flags=4163<UP,BROADCAST,RUNNING,MULTICAST>  mtu 9001
+        inet 172.31.75.167  netmask 255.255.240.0  broadcast 172.31.79.255
+        inet6 fe80::148d:8dff:fe1d:f0d5  prefixlen 64  scopeid 0x20<link>
+        ether 16:8d:8d:1d:f0:d5  txqueuelen 1000  (Ethernet)
+        RX packets 330785  bytes 398978521 (380.4 MiB)
+        RX errors 0  dropped 0  overruns 0  frame 0
+        TX packets 99248  bytes 56771974 (54.1 MiB)
+        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+
+lo: flags=73<UP,LOOPBACK,RUNNING>  mtu 65536
+        inet 127.0.0.1  netmask 255.0.0.0
+        inet6 ::1  prefixlen 128  scopeid 0x10<host>
+        loop  txqueuelen 1000  (Local Loopback)
+        RX packets 0  bytes 0 (0.0 B)
+        RX errors 0  dropped 0  overruns 0  frame 0
+        TX packets 0  bytes 0 (0.0 B)
+        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0
+        
+        
+   ```
+   
+   ## checking container ip 
+   
+   ```
+   [ec2-user@ip-172-31-75-167 ~]$ docker  exec -it ashuc1  sh 
+/ # ifconfig 
+eth0      Link encap:Ethernet  HWaddr 02:42:AC:11:00:02  
+          inet addr:172.17.0.2  Bcast:172.17.255.255  Mask:255.255.0.0
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:127 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:111 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:0 
+          RX bytes:11610 (11.3 KiB)  TX bytes:10422 (10.1 KiB)
+
+
+```
+## checking container details 
+
+```
+ docker  inspect  3d3a13181763
+ 
+```
+
+## port farwarding in docker Host
+
+<img src="portf.png">
+
+## docker custom bridge creation 
+
+```
+[root@ip-172-31-75-167 ~]# docker  network create  ashubr1  
+1638447df8c02380ffff67f98997eddfdb7218bb2c25bc4007853e6d3f48f972
+[root@ip-172-31-75-167 ~]# docker  network  ls
+NETWORK ID          NAME                DRIVER              SCOPE
+1638447df8c0        ashubr1             bridge              local
+bae6fe825aae        bridge              bridge              local
+d874058ca149        host                host                local
+ecb73dbeecad        none                null                local
+
+```
+
+## checking docker custom bridge network series 
+
+```
+[root@ip-172-31-75-167 ~]# docker  network  inspect  ashubr1 
+[
+    {
+        "Name": "ashubr1",
+        "Id": "1638447df8c02380ffff67f98997eddfdb7218bb2c25bc4007853e6d3f48f972",
+        "Created": "2020-12-01T06:53:11.732562838Z",
+        "Scope": "local",
+        "Driver": "bridge",
+        "EnableIPv6": false,
+        "IPAM": {
+            "Driver": "default",
+            "Options": {},
+            "Config": [
+                {
+                    "Subnet": "172.18.0.0/16",
+                    "Gateway": "172.18.0.1"
+                }
+
+```
+
+## launch a container in a particular bridge
+
+```
+[root@ip-172-31-75-167 ~]# docker run -it --rm --network ashubr1 alpine  sh 
+/ # ifoc
+sh: ifoc: not found
+/ # ifconfig 
+eth0      Link encap:Ethernet  HWaddr 02:42:AC:12:00:02  
+          inet addr:172.18.0.2  Bcast:172.18.255.255  Mask:255.255.0.0
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:14 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:0 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:0 
+          RX bytes:1172 (1.1 KiB)  TX bytes:0 (0.0 B)
+
+lo        Link encap:Local Loopback  
+          inet addr:127.0.0.1  Mask:255.0.0.0
+          UP LOOPBACK RUNNING  MTU:65536  Metric:1
+          RX packets:0 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:0 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000 
+          RX bytes:0 (0.0 B)  TX bytes:0 (0.0 B)
+
+/ # ping google.com
+PING google.com (142.250.73.206): 56 data bytes
+64 bytes from 142.250.73.206: seq=0 ttl=52 time=1.116 ms
+64 bytes from 142.250.73.206: seq=1 ttl=52 time=1.176 ms
+
+```
+
+## multiple bridge 
+
+<img src="brr.png">
+
+## custom bridge with static subnet mask
+
+```
+[root@ip-172-31-75-167 ~]# docker network create  ashubr2  --subnet  192.168.1.0/24 
+0d1e4bed9c8f00fcdceb1469f98817b990314d006d5f6af2ba0696f741f85204
+[root@ip-172-31-75-167 ~]# 
+[root@ip-172-31-75-167 ~]# docker run -d --name x1  --network ashubr2 --ip 192.168.1.100  alpine ping fb.com 
+6b29588ac31e3b2102080e1554ca781a2c090c354e0925bbb991a7b87e283681
+[root@ip-172-31-75-167 ~]# 
+[root@ip-172-31-75-167 ~]# 
+[root@ip-172-31-75-167 ~]# docker run -d --name x2  --network ashubr2   alpine ping fb.com 
+f5fefc6a582e67f85fbae3de41dfcc45b1d59b155679915c3e543a8b7cbdaa06
+[root@ip-172-31-75-167 ~]# docker exec -it x1 sh 
+/ # ifconfig 
+eth0      Link encap:Ethernet  HWaddr 02:42:C0:A8:01:64  
+          inet addr:192.168.1.100  Bcast:192.168.1.255  Mask:255.255.255.0
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:43 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:29 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:0 
+          RX bytes:3854 (3.7 KiB)  TX bytes:2666 (2.6 KiB)
+
+lo        Link encap:Local Loopback  
+          inet addr:127.0.0.1  Mask:255.0.0.0
+          UP LOOPBACK RUNNING  MTU:65536  Metric:1
+          RX packets:4 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:4 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:1000 
+          RX bytes:252 (252.0 B)  TX bytes:252 (252.0 B)
+
+/ # [root@ip-172-31-75-167 ~]# docker exec -it x2 sh 
+/ # ifconfig 
+eth0      Link encap:Ethernet  HWaddr 02:42:C0:A8:01:02  
+          inet addr:192.168.1.2  Bcast:192.168.1.255  Mask:255.255.255.0
+          UP BROADCAST RUNNING MULTICAST  MTU:1500  Metric:1
+          RX packets:31 errors:0 dropped:0 overruns:0 frame:0
+          TX packets:23 errors:0 dropped:0 overruns:0 carrier:0
+          collisions:0 txqueuelen:0 
+          RX bytes:2778 (2.7 KiB)  TX bytes:2078 (2.0 KiB)
+          
+ ```
+ 
+ 
