@@ -128,3 +128,37 @@ Image Retention policies:-
 Only for free Docker Users: after 6 months images will be delete in case of inactivity.
 
 ```
+
+
+## pushing on docker hub 
+
+```
+[ec2-user@ip-172-31-75-167 ~]$ docker  login  
+Login with your Docker ID to push and pull images from Docker Hub. If you don't have a Docker ID, head over to https://hub.docker.com to create one.
+Username: dockerashu
+Password: 
+WARNING! Your password will be stored unencrypted in /home/ec2-user/.docker/config.json.
+Configure a credential helper to remove this warning. See
+https://docs.docker.com/engine/reference/commandline/login/#credentials-store
+
+Login Succeeded
+[ec2-user@ip-172-31-75-167 ~]$ docker  tag  ashuflaskapp:v001   dockerashu/ashuflaskapp:v001
+[ec2-user@ip-172-31-75-167 ~]$ 
+[ec2-user@ip-172-31-75-167 ~]$ 
+[ec2-user@ip-172-31-75-167 ~]$ docker  push  dockerashu/ashuflaskapp:v001
+The push refers to repository [docker.io/dockerashu/ashuflaskapp]
+4b563e087903: Pushed 
+6a6baa180574: Pushed 
+4cb7804cd9e4: Pushed 
+a90a4e55d4e6: Mounted from library/python 
+cc343e3cd1d7: Mounted from library/python 
+7ca07421f35c: Mounted from library/python 
+c4a6d8ca5d2c: Mounted from library/python 
+059ed1793a98: Mounted from library/python 
+712264374d24: Mounted from library/python 
+475b4eb79695: Mounted from library/python 
+f3be340a54b9: Mounted from library/python 
+114ca5b7280f: Mounted from library/python 
+v001: digest: sha256:fe9cfc32434a54a213f3d35852b2a4c7b3bb6a47befe6e18fc756266d7368885 size: 2843
+
+```
