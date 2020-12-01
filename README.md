@@ -68,3 +68,38 @@ CONTAINER ID        IMAGE               COMMAND
 docker run --name ashuc1 -d -p 1100:5000 ashuflaskapp:v001 
 ```
 
+# Docker image sharing 
+
+<img src="imgshare.png">
+
+
+## saving docker image as tar
+
+```
+[ec2-user@ip-172-31-75-167 ~]$ docker save  -o  ashuflask.tar  930c0e4f3e2a
+[ec2-user@ip-172-31-75-167 ~]$ ls
+ashuflask.tar  day1  day2
+[ec2-user@ip-172-31-75-167 ~]$ ls  -lh ashuflask.tar 
+-rw------- 1 ec2-user ec2-user 879M Dec  1 05:11 ashuflask.tar
+
+```
+
+## restoring docker image using tar file 
+
+```
+[ec2-user@ip-172-31-75-167 ~]$ docker images  |  grep -i ashu
+
+[ec2-user@ip-172-31-75-167 ~]$ docker load -i ashuflask.tar 
+4b563e087903: Loading layer [==================================================>]  6.144kB/6.144kB
+Loaded image ID: sha256:930c0e4f3e2ae2c68a91ab31b70f7e11a92af78ec7403bb78911cf514c258124
+[ec2-user@ip-172-31-75-167 ~]$ docker images  |  grep -i ashu
+[ec2-user@ip-172-31-75-167 ~]$ docker images  |  grep -i 930
+<none>                  <none>              930c0e4f3e2a        19 minutes ago      897MB
+
+
+[ec2-user@ip-172-31-75-167 ~]$ docker  tag  930c0e4f3e2a   ashuflaskapp:v001  
+[ec2-user@ip-172-31-75-167 ~]$ 
+[ec2-user@ip-172-31-75-167 ~]$ docker images  |  grep -i ashu
+ashuflaskapp            v001                930c0e4f3e2a        20 minutes ago      897MB
+
+```
