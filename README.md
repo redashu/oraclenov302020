@@ -103,3 +103,28 @@ Loaded image ID: sha256:930c0e4f3e2ae2c68a91ab31b70f7e11a92af78ec7403bb78911cf51
 ashuflaskapp            v001                930c0e4f3e2a        20 minutes ago      897MB
 
 ```
+
+# docker registries 
+
+<img src="reg.png">
+
+## docker image name rules
+
+<img src="imgname.png">
+
+
+## image retention policy in docker hub 
+
+```
+Important announcement for #Docker Tech lovers from 2nd Nov 2020.
+
+Pull rate limit from Docker Hub 
+======================
+1. For anonymous users :- 100 Images per 6 hours
+2. Free authenticated users:- 200 Images per 6 hours
+3. Docker Pro and Team subscribers (me) : No limits ( ha ha ha ha ha).
+Image Retention policies:-
+=================
+Only for free Docker Users: after 6 months images will be delete in case of inactivity.
+
+```
