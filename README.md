@@ -662,3 +662,78 @@ tty:x:5:
 ^C
 
 ```
+
+# Docker COmpose 
+
+## compose intro 
+
+<img src="com.png">
+
+## file version and info 
+
+<img src="ci.png">
+
+## Docker compose install on linux platform
+
+<img src="composefile.png">
+
+## compose file vs docker command line 
+
+```
+[ec2-user@ip-172-31-75-167 ashucase1]$ cat docker-compose.yml 
+version: "3.8"
+services:
+ ashuapp1:
+  image: alpine
+  container_name: ashucc1
+  command: ping fb.com
+  
+  Like:==
+  
+[ec2-user@ip-172-31-75-167 ashucase1]$ docker run -d --name ashucc1 alpine ping fb.com
+
+
+```
+
+## DOcker compose example 1 :
+
+```
+[ec2-user@ip-172-31-75-167 ashucase1]$ cat docker-compose.yml 
+version: "3.8"
+services:
+ ashuapp1:
+  image: alpine
+  container_name: ashucc1
+  command: ping fb.com
+  
+```
+  
+
+## running compose file 
+
+```
+[ec2-user@ip-172-31-75-167 ashucase1]$ docker-compose up  -d
+Creating network "ashucase1_default" with the default driver
+Creating ashucc1 ... done
+[ec2-user@ip-172-31-75-167 ashucase1]$ docker-compose ps
+ Name       Command     State   Ports
+-------------------------------------
+ashucc1   ping fb.com   Up        
+
+```
+
+
+
+
+```
+[ec2-user@ip-172-31-75-167 ~]$ sudo curl -L "https://github.com/docker/compose/releases/download/1.27.4/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100   651  100   651    0     0  31000      0 --:--:-- --:--:-- --:--:-- 31000
+100 11.6M  100 11.6M    0     0  74.6M      0 --:--:-- --:--:-- --:--:-- 74.6M
+[ec2-user@ip-172-31-75-167 ~]$ 
+[ec2-user@ip-172-31-75-167 ~]$ sudo chmod +x /usr/local/bin/docker-compose
+[ec2-user@ip-172-31-75-167 ~]$ docker-compose  -v
+docker-compose version 1.27.4, build 40524192
+
+```
