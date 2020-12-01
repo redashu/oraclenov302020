@@ -1,0 +1,11 @@
+version: "3.8"
+services:
+ ashuflaskapp:
+  image: ashutoshhfl:appv001  # the image name i want to build 
+  build:
+   context: .  # location of dockerfile
+   dockerfile: ashu_flask.dockerfile  # name of dockerfile
+  container_name: ashuapp111 # name of container 
+  restart: always # restart policy
+  ports:  # is an array in yaml 
+   - "8877:5000"
