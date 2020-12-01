@@ -370,3 +370,105 @@ eth0      Link encap:Ethernet  HWaddr 02:42:C0:A8:01:02
   314  docker  network  disconnect   ashubr1  x1
 
 ```
+
+# Docker unix socket 
+
+## Demo for a particular user 
+
+```
+[ec2-user@ip-172-31-75-167 ~]$ ls -l  /var/run/docker.sock  
+srw-rw---- 1 root docker 0 Dec  1 03:50 /var/run/docker.sock
+[ec2-user@ip-172-31-75-167 ~]$ 
+[ec2-user@ip-172-31-75-167 ~]$ sudo -i
+[root@ip-172-31-75-167 ~]# useradd u1
+[root@ip-172-31-75-167 ~]# su - u1
+[u1@ip-172-31-75-167 ~]$ docker  images
+Got permission denied while trying to connect to the Docker daemon socket at unix:///var/run/docker.sock: Get http://%2Fvar%2Frun%2Fdocker.sock/v1.40/images/json: dial unix /var/run/docker.sock: connect: permission denied
+[u1@ip-172-31-75-167 ~]$ logout
+[root@ip-172-31-75-167 ~]# setfacl -m u:u1:rw- /var/run/docker.sock 
+[root@ip-172-31-75-167 ~]# 
+[root@ip-172-31-75-167 ~]# su - u1
+Last login: Tue Dec  1 08:56:54 UTC 2020 on pts/1
+[u1@ip-172-31-75-167 ~]$ docker  ps
+CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS              PORTS               NAMES
+f5fefc6a582e        alpine              "ping fb.com"       2 hours ago         Up 2 hours                              x2
+6b29588ac31e        alpine              "ping fb.com"       2 hours ago         Up 2 hours                              x1
+842448614bfa        alpine              "sh"                2 hours ago         Up 2 hours                              rk1
+b9008449e2c5        alpine              "/bin/sh"           2 hours ago         Up 2 hours                              sandeep_alpine
+
+```
+## more about docker socket
+
+<img src="dsocket.png">
+
+## Docker configuration files options 
+
+### there are number of options for docker engine configuration 
+
+### 1 
+
+<img src="dc1.png">
+
+### 2
+
+<img src="dc2.png">
+
+### 3
+
+<img src="dc3.png">
+
+
+## Docker engine tcp socket configuration 
+
+```
+[root@ip-172-31-75-167 sysconfig]# cat  docker
+# The max number of open files for the daemon itself, and all
+# running containers.  The default value of 1048576 mirrors the value
+# used by the systemd service unit.
+DAEMON_MAXFILES=1048576
+
+# Additional startup options for the Docker daemon, for example:
+# OPTIONS="--ip-forward=true --iptables=true"
+# By default we limit the number of open files per container
+OPTIONS="--default-ulimit nofile=1024:4096  -H tcp://0.0.0.0:2375 -H unix:///var/run/docker.socket "
+
+# How many seconds the sysvinit script waits for the pidfile to appear
+# when starting the daemon.
+DAEMON_PIDFILE_TIMEOUT=10
+
+```
+
+### reloading docker daemon 
+
+```
+[root@ip-172-31-75-167 sysconfig]# systemctl  daemon-reload 
+[root@ip-172-31-75-167 sysconfig]# systemctl  restart  docker 
+[root@ip-172-31-75-167 sysconfig]# 
+[root@ip-172-31-75-167 sysconfig]# netstat -nlpt
+Active Internet connections (only servers)
+Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name    
+tcp        0      0 0.0.0.0:22              0.0.0.0:*               LISTEN      3822/sshd           
+tcp        0      0 127.0.0.1:25            0.0.0.0:*               LISTEN      3328/master         
+tcp        0      0 127.0.0.1:39229         0.0.0.0:*               LISTEN      3193/containerd     
+tcp        0      0 0.0.0.0:111             0.0.0.0:*               LISTEN      2515/rpcbind        
+tcp6       0      0 :::22                   :::*                    LISTEN      3822/sshd           
+tcp6       0      0 :::2375                 :::*                    LISTEN      18675/dockerd       
+tcp6       0      0 :::111                  :::*                    LISTEN      2515/rpcbind
+
+```
+
+
+## Docker client configuration on mac os
+
+```
+export  DOCKER_HOST="tcp://100.26.75.67:2375"
+```
+
+## docker client as windows 10 in powershell
+
+```
+$env:DOCKER_HOST="tcp://100.26.75.67:2375" 
+```
+
+
+
