@@ -360,3 +360,13 @@ eth0      Link encap:Ethernet  HWaddr 02:42:C0:A8:01:02
  ```
  
  
+## some more command of docker network 
+
+```
+ 310  docker exec -it x1 sh 
+  311  docker  network  connect  x1  ashubr1 
+  312  docker  network  connect   ashubr1  x1
+  313  docker exec -it x1 sh 
+  314  docker  network  disconnect   ashubr1  x1
+
+```
