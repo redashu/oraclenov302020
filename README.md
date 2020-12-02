@@ -32,3 +32,40 @@ networks:
   748  docker-compose -f ashutoshh.yaml  ps
   ```
   
+  # Container based app problems 
+  
+  <img src="appprob.png">
+  
+  ## container orchestration 
+  
+  <img src="corch.png">
+  
+  ## k8s history 
+  
+  <img src="khist.png">
+  
+  ## k8s arch level 1
+  
+  <img src="k8sl1.png">
+
+
+## k8s arch kube apiserver 
+
+<img src="k8sapiserver.png">
+
+## k8s arch kube-schedular
+
+<img src="ksch.png">
+
+## k8s node and replication controller
+
+<img src="nrc.png">
+
+## k8s etcd 
+
+<img src="etcd.png">
+
+## k8s minion network CNI & kube proxy
+
+<img src="cniproxy.png">
+
