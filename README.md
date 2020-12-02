@@ -214,3 +214,83 @@ apiserver-etcd-client.key     apiserver.crt                 ca.key  front-proxy-
 apiserver-kubelet-client.crt  apiserver.key           
 
 ```
+
+## On master node you need to apply CNI 
+
+```
+ 33  wget https://docs.projectcalico.org/manifests/calico.yaml
+   34  ls
+   35  cat  calico.yaml 
+   36  ls
+   37  kubectl apply -f calico.yaml 
+   
+   ```
+   ### checking now
+   
+   ```
+   [root@master-node ~]# kubectl  get  nodes
+NAME            STATUS   ROLES    AGE     VERSION
+master-node     Ready    master   9m46s   v1.19.4
+minion-node-1   Ready    <none>   7m9s    v1.19.4
+minion-node-2   Ready    <none>   7m3s    v1.19.4
+minion-node-3   Ready    <none>   6m56s   v1.19.4
+
+```
+
+
+# Time of k8s client side installation 
+
+[kubeclt link] ('https://kubernetes.io/docs/tasks/tools/install-kubectl/')
+
+## Installing kubectl on mac os
+
+```
+curl -LO "https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/darwin/amd64/kubectl"
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100 47.1M  100 47.1M    0     0  5958k      0  0:00:08  0:00:08 --:--:-- 6411k
+❯ ls
+Applications           Downloads              PacketTracer7.3.1.0362 admin.conf             macos-terminal-themes
+Creative Cloud Files   Library                Pictures               awscli-bundle          minikube-darwin-amd64
+Desktop                Movies                 Public                 go                     powerlevel10k
+Documents              Music                  VirtualBox VMs         kubectl   
+
+
+----
+
+❯ chmod +x ./kubectl
+❯ sudo mv ./kubectl /usr/local/bin/kubectl
+Password:
+Sorry, try again.
+Password:
+❯ kubectl version --client
+Client Version: version.Info{Major:"1", Minor:"19", GitVersion:"v1.19.4", GitCommit:"d360454c9bcd1634cf4cc52d1867af5491dc9c5f", GitTreeState:"clean", BuildDate:"2020-11-11T13:17:17Z", GoVersion:"go1.15.2", Compiler:"gc", Platform:"darwin/amd64"}
+
+```
+
+
+## Kubectl to connect remote k8s cluster 
+
+```
+kubectl  get  nodes  --kubeconfig  admin.conf
+NAME            STATUS   ROLES    AGE   VERSION
+master-node     Ready    master   30m   v1.19.4
+minion-node-1   Ready    <none>   28m   v1.19.4
+minion-node-2   Ready    <none>   27m   v1.19.4
+minion-node-3   Ready    <none>   27m   v1.19.4
+
+```
+
+## more commands 
+
+```
+❯ kubectl  version  --kubeconfig  admin.conf
+Client Version: version.Info{Major:"1", Minor:"19", GitVersion:"v1.19.4", GitCommit:"d360454c9bcd1634cf4cc52d1867af5491dc9c5f", GitTreeState:"clean", BuildDate:"2020-11-11T13:17:17Z", GoVersion:"go1.15.2", Compiler:"gc", Platform:"darwin/amd64"}
+Server Version: version.Info{Major:"1", Minor:"19", GitVersion:"v1.19.4", GitCommit:"d360454c9bcd1634cf4cc52d1867af5491dc9c5f", GitTreeState:"clean", BuildDate:"2020-11-11T13:09:17Z", GoVersion:"go1.15.2", Compiler:"gc", Platform:"linux/amd64"}
+❯ kubectl  cluster-info   --kubeconfig  admin.conf
+Kubernetes master is running at https://54.166.21.186:6443
+KubeDNS is running at https://54.166.21.186:6443/api/v1/namespaces/kube-system/services/kube-dns:dns/proxy
+
+To further debug and diagnose cluster problems, use 'kubectl cluster-info dump'.
+
+```
