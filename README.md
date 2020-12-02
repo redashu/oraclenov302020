@@ -294,3 +294,9 @@ KubeDNS is running at https://54.166.21.186:6443/api/v1/namespaces/kube-system/s
 To further debug and diagnose cluster problems, use 'kubectl cluster-info dump'.
 
 ```
+
+
+## k8s client and cluster 
+
+<img src="k8scls.png">
+
