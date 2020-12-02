@@ -300,3 +300,65 @@ To further debug and diagnose cluster problems, use 'kubectl cluster-info dump'.
 
 <img src="k8scls.png">
 
+
+## k8s client side admin.conf to confi 
+
+<img src="kcli.png">
+
+## app to k8s deployment 
+
+<img src="app2k8s.png">
+
+## container vs pods
+
+<img src="pod.png">
+
+## deployment in k8s 
+
+```
+❯ cat ashupod1.yml
+apiVersion: v1
+kind: Pod
+metadata:
+ name: ashupod1 # unique name will be required
+spec:
+ containers:
+ - image: nginx  # image will be pulled from Docker hub 
+   name: ashuc1  # name of container under my pod
+   ports: # default port of nginx web server 
+   - containerPort: 80
+   
+❯ kubectl apply -f  ashupod1.yml --dry-run=client
+pod/ashupod1 created (dry run)
+❯ 
+
+❯ kubectl  get  pods
+NAME          READY   STATUS    RESTARTS   AGE
+rk            1/1     Running   0          3m29s
+sathishpod1   1/1     Running   0          2m54s
+svpod1        1/1     Running   0          3m21s
+❯ kubectl apply -f  ashupod1.yml
+pod/ashupod1 created
+❯ kubectl  get  pods
+NAME          READY   STATUS    RESTARTS   AGE
+ashupod1      1/1     Running   0          4s
+rk            1/1     Running   0          3m49s
+sathishpod1   1/1     Running   0          3m14s
+svpod1        1/1     Running   0          3m41s
+
+
+```
+
+## checking pod scheduling ip and nodes
+
+```
+❯ kubectl  get  pods -o wide
+NAME          READY   STATUS             RESTARTS   AGE     IP                NODE            NOMINATED NODE   READINESS GATES
+ashupod1      1/1     Running            0          2m31s   192.168.97.67     minion-node-2   <none>           <none>
+pod1          1/1     Running            0          2m2s    192.168.138.67    minion-node-1   <none>           <none>
+poddemo2      1/1     Running            0          2m5s    192.168.97.68     minion-node-2   <none>           <none>
+rk            1/1     Running            0          6s      192.168.138.69    minion-node-1   <none>           <none>
+rohitpod-2    1/1     Running            0          2m23s   192.168.174.195   minion-node-3   <none>           <none>
+sathishpod1   1/1     Running            0          5m41s  
+
+```
