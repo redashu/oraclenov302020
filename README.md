@@ -142,6 +142,50 @@ ashupod2   1/1     Running   0          39m   192.168.174.206   minion-node-3   
 
 ## end user to pod 
 
-<img src="e2p.png">
+## few more concepts 
 
+
+<img src="sc1.png">
+
+---
+
+
+<img src="sc2.png">
+
+---
+
+<img src="sc3.png">
+
+---
+
+<img src="sc4.png">
+
+
+# service creation in k8s
+
+## nodeport service creation 
+
+```
+❯ kubectl  create  service nodeport  ashus1  --tcp 1122:80 --dry-run=client -o yaml
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: null
+  labels:
+    app: ashus1
+  name: ashus1
+spec:
+  ports:
+  - name: 1122-80
+    port: 1122
+    protocol: TCP
+    targetPort: 80
+  selector:
+    app: ashus1
+  type: NodePort
+status:
+  loadBalancer: {}
+❯ kubectl  create  service nodeport  ashus1  --tcp 1122:80 --dry-run=client -o yaml  >ashupod2svc.yml
+
+```
 
