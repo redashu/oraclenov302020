@@ -189,3 +189,104 @@ status:
 
 ```
 
+## deleting all svc 
+
+```
+❯ kubectl delete service --all
+service "ashus1" deleted
+service "bprvnrj" deleted
+service "kubernetes" deleted
+service "navnee" deleted
+service "rks1" deleted
+service "rohits1" deleted
+service "sathishser1" deleted
+service "service-nodeport-s4nd33p" deleted
+service "sv1" deleted
+
+
+```
+
+## Exposing pod for creating service
+
+```
+kubectl  expose  pod  ashupod2  --type NodePort --port 1122 --target-port 80 --name  ashus111 --dry-run=client -o yaml
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: null
+  labels:
+    run: ashupod2
+  name: ashus111
+spec:
+  ports:
+  - port: 1122
+    protocol: TCP
+    targetPort: 80
+  selector:
+    run: ashupod2
+  type: NodePort
+status:
+  loadBalancer: {}
+  
+  ```
+  
+  ## Demo
+  
+  ```
+  ❯ kubectl  expose  pod  ashupod2  --type NodePort --port 1122 --target-port 80 --name  ashus11
+service/ashus11 exposed
+❯ 
+❯ 
+❯ kubectl get svc
+NAME         TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)          AGE
+ashus11      NodePort    10.100.201.63   <none>        1122:31232/TCP   46s
+kubernetes   ClusterIP   10.96.0.1       <none>        443/TCP          5m28s
+svsvc1       NodePort    10.111.84.218   <none>        1122:30124/TCP   11s
+
+```
+
+## Merging files in yaml
+
+```
+❯ kubectl  run ashupod11 --image=nginx --port 80  --dry-run=client -o yaml  >ashupodx.yml
+❯ 
+❯ 
+❯ kubectl create service nodeport ashupodsvc1  --tcp  1122:80  --dry-run=client -o yaml  >>ashupodx.yml
+
+```
+
+
+## accessing POd using kubectl exec 
+
+```
+❯ kubectl  exec  -it  ashupod11  bash
+kubectl exec [POD] [COMMAND] is DEPRECATED and will be removed in a future version. Use kubectl exec [POD] -- [COMMAND] instead.
+root@ashupod11:/# 
+root@ashupod11:/# 
+root@ashupod11:/# cat  /etc/os-release 
+PRETTY_NAME="Debian GNU/Linux 10 (buster)"
+NAME="Debian GNU/Linux"
+VERSION_ID="10"
+VERSION="10 (buster)"
+VERSION_CODENAME=buster
+ID=debian
+HOME_URL="https://www.debian.org/"
+SUPPORT_URL="https://www.debian.org/support"
+BUG_REPORT_URL="https://bugs.debian.org/"
+root@ashupod11:/# cd  /usr/share/nginx/html/
+root@ashupod11:/usr/share/nginx/html# ls
+50x.html  index.html
+root@ashupod11:/usr/share/nginx/html# echo Hello >index.html 
+
+```
+## Deploying flask application
+
+```
+1914  kubectl  run  ashupypod  --image=dockerashu/ashuflaskapp:v001 --port 5000 --dry-run=client -o yaml >flask.yml
+ 1915  kubectl apply -f flask.yml
+ 1916  kubectl  get  po 
+ 1917  kubectl expose pod ashupypod  --type NodePort --port 1122 --target-port 5000 
+ 1918  kubectl  get  svc 
+
+```
+
