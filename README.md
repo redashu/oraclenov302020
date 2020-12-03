@@ -337,3 +337,248 @@ etcd-master-node                           1/1     Running   1          21h
 kube-apiserver-master-node                 1/1     Running   1          21h
 
 ```
+
+
+## Namspaec based pod deployment 
+
+```
+❯ cat ashupod2.yml
+apiVersion: v1
+kind: Pod
+metadata:
+  namespace: ashu-space 
+  creationTimestamp: null
+  labels:
+    run: ashupod2
+  name: ashupod2  # name of the pod 
+spec:
+  containers:
+  - image: nginx
+    name: ashupod2
+    ports:
+    - containerPort: 80
+    resources: {}
+  dnsPolicy: ClusterFirst
+  restartPolicy: Always
+status: {}
+
+```
+
+## POD with limitations
+
+<img src="podlim.png">
+
+# Replication Controller
+
+```
+apiVersion: v1
+kind: ReplicationController
+metadata:
+ name: ashu-rc-1
+ namespace: ashu-space
+ labels:  # label of RC 
+  x: helloashu
+
+spec:
+ replicas: 1  # no of pods we want
+ template:
+  metadata:
+   labels:  # label of POd 
+    x: ashuhello
+  spec:
+   containers:
+   - image: nginx
+     name: ashuc1 # optional 
+     ports:
+     - containerPort: 80
+     
+```
+
+## deploying RC
+
+```
+❯ kubectl apply -f ashurc.yml
+replicationcontroller/ashu-rc-1 created
+❯ kubectl  get  rc  -n ashu-space
+NAME        DESIRED   CURRENT   READY   AGE
+ashu-rc-1   1         1         1       9s
+
+░▒▓ ~/Desktop/ashuk8sres ····
+
+```
+
+## Exposing RC to svc
+
+```
+❯ kubectl  expose  rc  ashu-rc-1 --type NodePort --port 1122 --target-port 80 --name ashusvc11 -n ashu-space
+service/ashusvc11 exposed
+❯ kubectl  get  svc  -n ashu-space
+NAME        TYPE       CLUSTER-IP     EXTERNAL-IP   PORT(S)          AGE
+ashusvc11   NodePort   10.103.25.86   <none>        1122:30643/TCP   16s
+
+```
+
+## scaling rc
+
+```
+ kubectl  scale  rc  ashu-rc-1  --replicas=3  -n ashu-space
+replicationcontroller/ashu-rc-1 scaled
+❯ kubectl get po -n ashu-space -o wide
+NAME              READY   STATUS    RESTARTS   AGE     IP                NODE            NOMINATED NODE   READINESS GATES
+ashu-rc-1-ktlqh   1/1     Running   0          12s     192.168.97.99     minion-node-2   <none>           <none>
+ashu-rc-1-qnzqz   1/1     Running   0          105s    192.168.138.92    minion-node-1   <none>           <none>
+ashu-rc-1-qz2mc   1/1     Running   0          3m43s   192.168.174.224   minion-node-3   <none>           <none>
+
+```
+
+## RC edit
+
+```
+❯ kubectl  edit rc  ashu-rc-1 -n ashu-space
+replicationcontroller/ashu-rc-1 edited
+❯ kubectl get po -n ashu-space -o wide
+NAME              READY   STATUS    RESTARTS   AGE     IP                NODE            NOMINATED NODE   READINESS GATES
+ashu-rc-1-49l9v   1/1     Running   0          4s      192.168.174.233   minion-node-3   <none>           <none>
+ashu-rc-1-bb9d4   1/1     Running   0          4s      192.168.97.103    minion-node-2   <none>           <none>
+ashu-rc-1-f42bt   1/1     Running   0          4s      192.168.97.104    minion-node-2   <none>           <none>
+ashu-rc-1-qnzqz   1/1     Running   0          4m23s   192.168.138.92    minion-node-1   <none>           <none>
+ashu-rc-1-qz2mc   1/1     Running   0          6m21s   192.168.174.224   minion-node-3   <none>
+
+```
+
+
+## Some RC delete 
+
+```
+1969  kubectl apply -f ashurc.yml 
+ 1970  kubectl  get  rc  -n ashu-space 
+ 1971  kubectl  get  pod  -n ashu-space 
+ 1972  kubectl  expose  rc  ashu-rc-1 --type NodePort --port 1122 --target-port 80 --name ashusvc11 -n ashu-space 
+ 1973  kubectl  get  svc  -n ashu-space 
+ 1974  \thistory
+ 1975  ls
+ 1976  cat  ashurc.yml
+ 1977  ls
+ 1978  kubectl  get  rc -n ashu-space
+ 1979  history
+ 1980  kubectl  get  po  -n ashu-space 
+ 1981  kubectl  get  po  -n ashu-space  -o wide
+ 1982  kubectl  delete pod ashu-rc-1-g2wbz  -n ashu-space 
+ 1983  kubectl  get  po  -n ashu-space  -o wide
+ 1984  ls
+ 1985  vim ashurc.yml
+ 1986  kubectl get rc -n ashu-space
+ 1987  kubectl get po -n ashu-space
+ 1988  kubectl apply -f ashurc.yml
+ 1989  kubectl get po -n ashu-space
+ 1990  kubectl get po -n ashu-space -o wide
+ 1991  kubectl  scale  rc  ashu-rc-1  --replica=3  -n ashu-space
+ 1992  kubectl  scale  rc  ashu-rc-1  --replicas=3  -n ashu-space
+ 1993  kubectl get po -n ashu-space -o wide
+ 1994  kubectl  scale  rc  ashu-rc-1  --replicas=2  -n ashu-space
+ 1995  kubectl get po -n ashu-space -o wide
+ 1996  kubectl  edit rc  ashu-rc-1 -n ashu-space
+ 1997  kubectl get po -n ashu-space -o wide
+ 1998  kubectl  get  svc -n ashu-space
+ 1999  kubectl get po -n ashu-space -o wide --show-labels
+ 2000  kubectl get svc -n ashu-space
+
+```
+
+## Deployment 
+
+<img src="deploy.png">
+
+## creating deployment 
+
+```
+kubectl create deployment  ashu-dep1  --image=dockerashu/mozilla:appv1 --dry-run=client -o yaml >mozilladep.yml
+
+```
+## OR
+
+```
+kubectl create deployment  ashu-dep1  --image=dockerashu/mozilla:appv1 -n ashu-space --dry-run=client -o yaml >mozilladep.yml
+
+```
+
+
+## deployment with namespace 
+
+```
+2029  kubectl  create namespace  test1 --dry-run=client -o yaml  >>test.yml
+ 2030  echo "---"  >>test.yml
+ 2031  kubectl create deployment  ashu-dep1  --image=dockerashu/mozilla:appv1 -n test1 --dry-run=client -o yaml >>test.yml
+ 
+ ```
+ 
+ ## Reality of Deployment 
+ 
+ <img src="depreal.png">
+ 
+ ## more commands
+ 
+ ```
+ ❯ kubectl  apply -f  mozilladep.yml
+Warning: kubectl apply should be used on resource created by either kubectl create --save-config or kubectl apply
+namespace/ashu-space configured
+deployment.apps/ashu-dep1 created
+❯ vim mozilladep.yml
+❯ kubectl  get deployments -n ashu-space
+NAME        READY   UP-TO-DATE   AVAILABLE   AGE
+ashu-dep1   1/1     1            1           3m21s
+❯ 
+❯ kubectl  get deployment  -n ashu-space
+NAME        READY   UP-TO-DATE   AVAILABLE   AGE
+ashu-dep1   1/1     1            1           3m26s
+❯ 
+❯ 
+❯ kubectl  get deploy  -n ashu-space
+NAME        READY   UP-TO-DATE   AVAILABLE   AGE
+ashu-dep1   1/1     1            1           3m32s
+❯ 
+❯ kubectl  get rs  -n ashu-space
+NAME                   DESIRED   CURRENT   READY   AGE
+ashu-dep1-64cf8f46c4   1         1         1       3m42s
+❯ kubectl  get po  -n ashu-space
+NAME                         READY   STATUS    RESTARTS   AGE
+ashu-dep1-64cf8f46c4-nj62x   1/1     Running   0          3m48s
+
+```
+
+## Expose deploy to create svc
+
+```
+❯ kubectl expose deployment ashu-dep1 --type NodePort --port 1122 --target-port 80 -n ashu-space
+service/ashu-dep1 exposed
+❯ kubectl  get svc  -n ashu-space
+NAME        TYPE       CLUSTER-IP      EXTERNAL-IP   PORT(S)          AGE
+ashu-dep1   NodePort   10.103.187.75   <none>        1122:31068/TCP   10s
+
+
+```
+## External app load Balancer with dNS 
+
+<img src="aplb.png">
+
+## updating deployment image
+
+```
+2064  kubectl describe  deploy ashu-dep1  -n ashu-space
+ 2065  kubectl set image deployment ashu-dep1 mozilla=dockerashu/mozilla:appv2  -n ashu-space
+ 2066  kubectl describe  deploy ashu-dep1  -n ashu-space
+ 
+ ```
+ ## history commands of deployment
+ 
+ ```
+ 2087  kubectl set image deployment ashu-dep1 mozilla=dockerashu/mozilla:appv3  -n ashu-space
+ 2088  kubectl describe  deploy ashu-dep1  -n ashu-space
+ 2089  history
+ 2090  kubectl rollout history deploy ashu-dep1 -n ashu-space 
+ 2091  kubectl rollout undo  deploy ashu-dep1  --to-revision=1  -n ashu-space 
+ 2092  kubectl rollout status deploy ashu-dep1 -n ashu-space 
+ 
+ ```
+ 
+ 
