@@ -290,3 +290,50 @@ root@ashupod11:/usr/share/nginx/html# echo Hello >index.html
 
 ```
 
+# Namespaces in K8s
+
+<img src="ns.png">
+
+## default namespace
+
+```
+❯ kubectl  get  namespace
+NAME              STATUS   AGE
+default           Active   21h
+kube-node-lease   Active   21h
+kube-public       Active   21h
+kube-system       Active   21h
+
+```
+
+## creating ns
+
+```
+❯ kubectl  create namespace  ashu-space
+namespace/ashu-space created
+❯ kubectl  get  ns
+NAME              STATUS   AGE
+ashu-space        Active   4s
+default           Active   21h
+kube-node-lease   Active   21h
+kube-public       Active   21h
+kube-system       Active   21h
+
+```
+
+## kube-system 
+
+```
+❯ kubectl  get  po  -n  kube-system
+NAME                                       READY   STATUS    RESTARTS   AGE
+calico-kube-controllers-5dc87d545c-6rsh7   1/1     Running   1          21h
+calico-node-4qcnq                          1/1     Running   1          21h
+calico-node-5k275                          1/1     Running   1          21h
+calico-node-lmmm2                          1/1     Running   1          21h
+calico-node-r79rf                          1/1     Running   1          21h
+coredns-f9fd979d6-b7f8g                    1/1     Running   1          21h
+coredns-f9fd979d6-x9tks                    1/1     Running   1          21h
+etcd-master-node                           1/1     Running   1          21h
+kube-apiserver-master-node                 1/1     Running   1          21h
+
+```
