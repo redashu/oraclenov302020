@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: ashupod-2
+spec:
+  containers: # writing info about containers
+  - image: nginx
+    name: ashuc1
+    ports:
+      - containerPort: 80

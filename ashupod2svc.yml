@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: null
+  labels:
+    app: ashus1
+  name: ashus1  # name of the service 
+spec:
+  ports:
+  - name: 1122-80  # name of socket 
+    port: 1122     # port of service that will be bounded with service IP 
+    protocol: TCP   # protocol of app 
+    targetPort: 80  #  POd app port number 
+  selector:
+    app: ashus1
+  type: NodePort   # type of service 
+status:
+  loadBalancer: {}
