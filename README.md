@@ -359,6 +359,8 @@ metadata:
   name: podint
   namespace: ashu-space 
 spec:
+  imagePullSecrets:
+  - name: imgsec
   containers:
   - image: ashutoshh.azurecr.io/alpine:v1
     name: podint
@@ -379,3 +381,129 @@ status: {}
  
  ```
  
+# webui in k8s
+
+<img src="svcaccount.png">
+
+## checking service account and token of that 
+
+```
+❯ kubectl  get  sa   -n helloworld
+NAME      SECRETS   AGE
+default   1         80s
+❯ kubectl  get  secret   -n helloworld
+NAME                  TYPE                                  DATA   AGE
+default-token-f29zt   kubernetes.io/service-account-token   3      89s
+❯ kubectl describe secret default-token-f29zt   -n helloworld
+^C
+❯ kubectl describe secret default-token-f29zt   -n helloworld
+Name:         default-token-f29zt
+Namespace:    helloworld
+Labels:       <none>
+Annotations:  kubernetes.io/service-account.name: default
+              kubernetes.io/service-account.uid: 3d044590-7c22-4177-9203-d5b4d254451c
+
+Type:  kubernetes.io/service-account-token
+
+Data
+====
+token:      eyJhbGciOiJSUzI1NiIsImtpZCI6ImtGMnE2YWRYUmpUZ3JsRnZiTnlCOEJHU3NYZnQ5MzFOR09nbmhfaVNMQWcifQ.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJoZWxsb3dvcmxkIiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9zZWNyZXQubmFtZSI6ImRlZmF1bHQtdG9rZW4tZjI5enQiLCJrdWJlcm5ldGVzLmlvL3NlcnZpY2VhY2NvdW50L3NlcnZpY2UtYWNjb3VudC5uYW1lIjoiZGVmYXVsdCIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2VydmljZS1hY2NvdW50LnVpZCI6IjNkMDQ0NTkwLTdjMjItNDE3Ny05MjAzLWQ1YjRkMjU0NDUxYyIsInN1YiI6InN5c3RlbTpzZXJ2aWNlYWNjb3VudDpoZWxsb3dvcmxkOmRlZmF1bHQifQ.WbwmCAdZbI0WBdvqpETq3xAhuNq9TxyK3s3jc9sZkoNFCcg90RlG3ta4_lpvDzYgR4ewhscmEP1dOQ4uOceV2e_dJtTgtZVBibe-WzxZp-SsdwClaB211SltGvMLIMK4dTkIGvkD_qo7jZFfnty1cvmOjJeolYBW5nlinvC2Ao2YBV9YW2f4xQrCfSHijbQxeZhur4ZJYHdWCcsKkKCCT4ctw4mDXZnEFQOkhyCS-FPVg9f3e6zNmTkJwCeWooylyUq37XjswRMuqBqDsQFVrKcWID7yByMVZMS3nv24eHurPQ4LIWjXNM3KXLVZNB29kbOcdXzwTe5vs6y9zVxqQA
+ca.crt:     1066 bytes
+namespace:  10 bytes
+
+
+```
+
+## dashbarod deployment 
+
+[link dashbaord] ('https://kubernetes.io/docs/tasks/access-application-cluster/web-ui-dashboard/')
+
+```
+ kubectl apply -f https://raw.githubusercontent.com/kubernetes/dashboard/v2.0.0/aio/deploy/recommended.yaml
+namespace/kubernetes-dashboard created
+serviceaccount/kubernetes-dashboard created
+service/kubernetes-dashboard created
+secret/kubernetes-dashboard-certs created
+secret/kubernetes-dashboard-csrf created
+secret/kubernetes-dashboard-key-holder created
+configmap/kubernetes-dashboard-settings created
+role.rbac.authorization.k8s.io/kubernetes-dashboard created
+clusterrole.rbac.authorization.k8s.io/kubernetes-dashboard created
+rolebinding.rbac.authorization.k8s.io/kubernetes-dashboard created
+clusterrolebinding.rbac.authorization.k8s.io/kubernetes-dashboard created
+deployment.apps/kubernetes-dashboard created
+service/dashboard-metrics-scraper created
+deployment.apps/dashboard-metrics-scraper created
+❯ kubectl  get  ns
+NAME                   STATUS   AGE
+ashu-space             Active   26h
+default                Active   2d
+helloworld             Active   8m1s
+hteenvan-space         Active   24h
+kube-node-lease        Active   2d
+kube-public            Active   2d
+kube-system            Active   2d
+kubernetes-dashboard   Active   32s
+ns-sandeep             Active   26h
+
+```
+
+## verify dashboard deployment 
+
+```
+❯ kubectl  get  po  -n kubernetes-dashboard
+NAME                                         READY   STATUS    RESTARTS   AGE
+dashboard-metrics-scraper-7b59f7d4df-7x672   1/1     Running   0          61s
+kubernetes-dashboard-74d688b6bc-7vhl4        1/1     Running   0          63s
+❯ kubectl  get  svc   -n kubernetes-dashboard
+NAME                        TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)    AGE
+dashboard-metrics-scraper   ClusterIP   10.107.78.66   <none>        8000/TCP   83s
+kubernetes-dashboard        ClusterIP   10.110.40.34   <none>        443/TCP    90s
+❯ kubectl  get  sa   -n kubernetes-dashboard
+NAME                   SECRETS   AGE
+default                1         105s
+kubernetes-dashboard   1         104s
+❯ kubectl  get  secret   -n kubernetes-dashboard
+^C
+❯ kubectl  get  secret   -n kubernetes-dashboard
+NAME                               TYPE                                  DATA   AGE
+default-token-mpjk4                kubernetes.io/service-account-token   3      2m13s
+kubernetes-dashboard-certs         Opaque                                0      2m10s
+kubernetes-dashboard-csrf          Opaque                                1      2m9s
+kubernetes-dashboard-key-holder    Opaque                                2      2m9s
+kubernetes-dashboard-token-vcsrc   kubernetes.io/service-account-token   3      2m12s
+
+```
+
+## dashbarod view
+
+<img src="dash.png">
+
+## checking token of dashboard svc account 
+
+```
+ kubectl get secret -n kubernetes-dashboard
+
+NAME                               TYPE                                  DATA   AGE
+default-token-mpjk4                kubernetes.io/service-account-token   3      6m57s
+kubernetes-dashboard-certs         Opaque                                0      6m54s
+kubernetes-dashboard-csrf          Opaque                                1      6m53s
+kubernetes-dashboard-key-holder    Opaque                                2      6m53s
+kubernetes-dashboard-token-vcsrc   kubernetes.io/service-account-token   3      6m56s
+❯ 
+❯ kubectl describe  secret kubernetes-dashboard-token-vcsrc   -n kubernetes-dashboard
+Name:         kubernetes-dashboard-token-vcsrc
+Namespace:    kubernetes-dashboard
+Labels:       <none>
+Annotations:  kubernetes.io/service-account.name: kubernetes-dashboard
+              kubernetes.io/service-account.uid: 3be7276b-dab4-42b7-94b3-8c7bb9ffc1f9
+
+Type:  kubernetes.io/service-account-token
+
+Data
+====
+ca.crt:     1066 bytes
+namespace:  20 bytes
+token:      eyJhbGciOiJSUzI1NiIsImtpZCI6ImtGMnE2YWRYUmpUZ3JsRnZiTnlCOEJHU3NYZnQ5MzFOR09nbmhfaVNMQWcifQ.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJrdWJlcm5ldGVzLWRhc2hib2FyZCIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2V
+
+```
