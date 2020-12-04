@@ -507,3 +507,74 @@ namespace:  20 bytes
 token:      eyJhbGciOiJSUzI1NiIsImtpZCI6ImtGMnE2YWRYUmpUZ3JsRnZiTnlCOEJHU3NYZnQ5MzFOR09nbmhfaVNMQWcifQ.eyJpc3MiOiJrdWJlcm5ldGVzL3NlcnZpY2VhY2NvdW50Iiwia3ViZXJuZXRlcy5pby9zZXJ2aWNlYWNjb3VudC9uYW1lc3BhY2UiOiJrdWJlcm5ldGVzLWRhc2hib2FyZCIsImt1YmVybmV0ZXMuaW8vc2VydmljZWFjY291bnQvc2V
 
 ```
+
+
+## RBAC IN K8S 
+
+<img src="roles.png">
+
+## type of roles 
+
+<img src="rtype.png">
+
+## checking roles and clusterroles 
+
+```
+ kubectl get roles
+^C
+❯ kubectl get roles
+No resources found in default namespace.
+❯ kubectl get roles  -n kubernetes-dashboard
+NAME                   CREATED AT
+kubernetes-dashboard   2020-12-04T10:03:47Z
+❯ kubectl get clusterroles
+NAME                                                                   CREATED AT
+admin                                                                  2020-12-02T09:58:41Z
+calico-kube-controllers                                                2020-12-02T10:07:31Z
+calico-node                                                            2020-12-02T10:07:31Z
+cluster-admin                                                          2020-12-02T09:58:41Z
+edit                                                                   2020-12-02T09:58:41Z
+kubeadm:get-nodes                                                      2020-12-02T09:58:43Z
+kubernetes-dashboard                                                   2020-12-04T10:03:47Z
+system:aggregate-to-admin                                              2020-12-02T09:58:41Z
+system:aggregate-to-edit                                               2020-12-02T09:58:41Z
+system:aggregate-to-view             
+
+```
+## binding clusterrole -- cluster-admin in kubernets-dashboard svc acccount 
+
+```
+❯ cat clsrolebind.yml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: admin-user
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cluster-admin
+subjects:
+- kind: ServiceAccount
+  name: kubernetes-dashboard
+  namespace: kubernetes-dashboard
+  
+  ```
+  
+  
+  # CLoud services for k8s --
+  
+  ## EKS 
+  
+  <img src="eks.png">
+  
+  ## Ingress controller in k8s
+  
+  <img src="ingress.png">
+  
+  <img src="ingre.png">
+  
+  ## HELM overview 
+  
+  <img src="helm.png">
+  
+  
