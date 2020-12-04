@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Pod
+metadata:
+ name: ashupod1 # unique name will be required
+ labels:  #  label is the thing to find pod by any other resource in k8s
+  x: ashuapp1   # label must contain a key: value pair and it must be unique 
+  y: helloashu
+spec:
+ containers:
+ - image: nginx  # image will be pulled from Docker hub 
+   name: ashuc1  # name of container under my pod
+   ports: # default port of nginx web server 
+   - containerPort: 80

@@ -1,0 +1,36 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  labels:
+    run: ashupod11  # label of pod 
+  name: ashupod11
+spec:
+  containers:
+  - image: nginx
+    name: ashupod11
+    ports:
+    - containerPort: 80
+    resources: {}
+  dnsPolicy: ClusterFirst
+  restartPolicy: Always
+status: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: null
+  labels:
+    app: ashupodsvc1
+  name: ashupodsvc1
+spec:
+  ports:
+  - name: 1122-80
+    port: 1122
+    protocol: TCP
+    targetPort: 80
+  selector:
+   run: ashupod11 # same as label of POD 
+  type: NodePort
+status:
+  loadBalancer: {}

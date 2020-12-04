@@ -1,0 +1,30 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+ name: ashu-space 
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: ashu-dep1
+  name: ashu-dep1
+  namespace: ashu-space
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ashu-dep1
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: ashu-dep1
+    spec:
+      containers:
+      - image: dockerashu/mozilla:appv1
+        name: mozilla
+        resources: {}
+status: {}
