@@ -346,3 +346,36 @@ wpsvc       NodePort    10.110.5.105   <none>        1122:30483/TCP   10s
  
  ```
  
+## PRivate docker image deploy in K8s 
+
+```
+❯ cat  private.yml
+apiVersion: v1
+kind: Pod
+metadata:
+  creationTimestamp: null
+  labels:
+    run: podint
+  name: podint
+  namespace: ashu-space 
+spec:
+  containers:
+  - image: ashutoshh.azurecr.io/alpine:v1
+    name: podint
+    command: ["/bin/sh","-c","ping fb.com"]  # use of command is to replace parent process by entrypoint 
+    resources: {}
+  dnsPolicy: ClusterFirst
+  restartPolicy: Always
+status: {}
+
+```
+
+## deployment will show error duing image pull 
+
+## creating secret for docker private registry 
+
+```
+ kubectl  create secret   docker-registry  imgsec --docker-server=ashutoshh.azurecr.io --docker-username=ashutoshh      --docker-password=Bjn0Qr=WoiAlpkw4CZMbxxfe/Hc5Gmbh  -n ashu-space 
+ 
+ ```
+ 
