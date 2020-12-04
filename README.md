@@ -93,3 +93,99 @@ data:
 kind: Secret
 
 ```
+
+## deployment of DB 
+
+```
+2134  kubectl apply -f ashudb.yml
+ 2135  kubectl get  deploy -n ashu-space
+ 2136  kubectl get  po  -n ashu-space
+ 2137  kubectl logs  ashudb-685f8b99c8-4mcmr   -n ashu-space
+ 
+ ```
+ 
+ ## checking password 
+ 
+ ```
+ ❯ kubectl get  po -n ashu-space
+NAME                      READY   STATUS    RESTARTS   AGE
+ashudb-685f8b99c8-4mcmr   1/1     Running   0          4m56s
+❯ kubectl  exec -it ashudb-685f8b99c8-4mcmr  -n ashu-space  -- bash
+root@ashudb-685f8b99c8-4mcmr:/# 
+root@ashudb-685f8b99c8-4mcmr:/# 
+root@ashudb-685f8b99c8-4mcmr:/# 
+root@ashudb-685f8b99c8-4mcmr:/# 
+root@ashudb-685f8b99c8-4mcmr:/# 
+root@ashudb-685f8b99c8-4mcmr:/# mysql -u root -p
+Enter password: 
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 8
+Server version: 8.0.22 MySQL Community Server - GPL
+
+Copyright (c) 2000, 2020, Oracle and/or its affiliates. All rights reserved.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql> 
+
+```
+# Storage in k8s
+
+<img src="st.png">
+
+## storage use type 
+
+<img src="stcat.png">
+
+## mysql Db deployment with secret and NFS volume 
+
+```
+❯ cat ashudb.yml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  labels:
+    app: ashudb
+  name: ashudb  # name of deployment 
+  namespace: ashu-space  # name of namespace 
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ashudb
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        app: ashudb   # label of pod
+    spec:
+      volumes:  # creating volume 
+      - name: ashudbvol # name of volume 
+        nfs:   #  type of volume from where you need storage
+         server: 172.31.75.167  # nfs server IP 
+         path: /storage/ashu   # storge path from NFS server 
+      containers:
+      - image: mysql   # image from docker hub 
+        name: mysql  # name of container 
+        volumeMounts:
+        - name: ashudbvol
+          mountPath: /var/lib/mysql 
+        ports:
+        - containerPort: 3306  # default port 
+        env:  #  to define/replace env variable
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom:
+           secretKeyRef:  # to use secret it is a keyword 
+            name: ashudbinfo # name of secret 
+            key: sqlpw  # key we assigned during secret creation 
+
+        resources: {}
+
+
+```
